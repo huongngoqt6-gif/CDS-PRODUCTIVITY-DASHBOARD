@@ -40,7 +40,7 @@ DASHBOARD_PASSWORD = "1234"  # Mật khẩu của bạn
 # ============================================================
 # 1. ĐỊNH NGHĨA POPUP NHẬP MẬT KHẨU (ST.DIALOG)
 # ============================================================
-@st.dialog("🔒 DASHBOARD ACCESS AUTHENTICATION")
+@st.dialog("🔒ACCESS AUTHENTICATION")
 def password_popup():
     # Ép chiều rộng modal rộng ra để chữ không bị rớt dòng
     st.markdown(

@@ -38,7 +38,7 @@ DASHBOARD_PASSWORD = "123"  # Mật khẩu của bạn
 
 
 # ============================================================
-# 1. ĐỊNH NGHĨA POPUP NHẬP MẬT KHẨU (ST.DIALOG)
+# 1. ĐỊNH NGHĨA POPUP NHẬP MẬT KHẨU
 # ============================================================
 @st.dialog("🔒 XÁC THỰC TRUY CẬP DASHBOARD")
 def password_popup():
@@ -51,7 +51,7 @@ def password_popup():
         if submit_btn:
             if entered_password == DASHBOARD_PASSWORD:
                 st.session_state.authenticated = True
-                st.rerun()  # Đóng popup và load trực tiếp vào dashboard
+                st.rerun()  # Đăng nhập thành công -> load trực tiếp vào dashboard
             else:
                 st.error("Sai mật khẩu! Vui lòng thử lại.")
 
@@ -60,40 +60,22 @@ def password_popup():
 # 2. PHÂN LUỒNG HIỂN THỊ
 # ============================================================
 if st.session_state.authenticated:
-    # 🌟 KHI ĐÃ ĐĂNG NHẬP: Bỏ qua (pass) để code dashboard gốc ở dưới chạy bình thường
+    # 🌟 KHI ĐÃ ĐĂNG NHẬP: Bỏ qua để chạy code dashboard gốc ở dưới
     pass
 
 else:
-    # 🌟 KHI CHƯA ĐĂNG NHẬP: CHỈ HIỂN THỊ TRANG COVER (TRANG BÌA)
+    # 🌟 KHI CHƯA ĐĂNG NHẬP: HIỂN THỊ TRANG COVER
+    
+    # [BẠN ĐẶT CODE GIAO DIỆN TRANG COVER GỐC CỦA BẠN Ở ĐÂY]
+    # Ví dụ phần hiển thị trang bìa hiện tại của bạn:
     st.markdown("<br>", unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns([1, 4, 1])
-    with col2:
-        st.markdown(
-            """
-            <div style="padding: 30px; border: 1px solid #D8E1EA; border-radius: 14px; background: #FFFFFF; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                <h1 style="color: #0A192F; font-size: 26px;">CS OPERATIONS PERFORMANCE DASHBOARD</h1>
-                <p style="color: #666; font-size: 14px;">Capacity • Workload • Utilization • Performance</p>
-                <hr style="border: 0; height: 3px; background: #FF7A00; width: 100%;">
-                <br>
-                <ul>
-                    <li><b>CAPACITY:</b> HC Capacity, Requirement & Gap</li>
-                    <li><b>WORKLOAD:</b> Customer, Volume, Segment & Activity</li>
-                    <li><b>UTILIZATION:</b> Office Workload, CS Allocation</li>
-                    <li><b>PERFORMANCE:</b> CS Resolution, YVF Booking Adoption</li>
-                </ul>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    # ⚠️ QUAN TRỌNG: Ngay khi trang cover load lên, nếu bạn muốn vừa bấm nút là gọi popup:
+    # Đoạn nút bấm của bạn trên trang cover hãy thay thành:
+    if st.button("VIEW DASHBOARD ➔", type="primary", use_container_width=True):
+        password_popup()  # Gọi trực tiếp popup khi click
         
-        st.write("")
-        # Nút bấm kích hoạt Popup nhập mật khẩu
-        if st.button("VIEW DASHBOARD ➔", type="primary", use_container_width=True):
-            password_popup()
-            
-    # Dừng app ở đây khi chưa đăng nhập để không bị lộ nội dung dashboard bên dưới
-    st.stop()
+    st.stop() # Dừng lại không load phần dashboard bên dưới khi chưa đăng nhập
 
 APP_TITLE = "CS OPERATIONS PERFORMANCE DASHBOARD"
 APP_SUBTITLE = "Capacity • Workload • Utilization • Performance"

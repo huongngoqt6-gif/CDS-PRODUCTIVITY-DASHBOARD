@@ -45,35 +45,21 @@ def password_popup():
     st.write("Vui lòng nhập mật khẩu để truy cập vào hệ thống dashboard.")
     
     with st.form("popup_login_form"):
-        entered_password = st.text_input("Mật khẩu bảo mật", type="password", placeholder="Nhập password...")
-        submit_btn = st.form_submit_button("Xác nhận", use_container_width=True)
+        entered_password = st.text_input("Password", type="password", placeholder="Insert password...")
+        submit_btn = st.form_submit_button("Confirm", use_container_width=True)
         
         if submit_btn:
             if entered_password == DASHBOARD_PASSWORD:
                 st.session_state.authenticated = True
                 st.rerun()  # Đóng popup và load lại trang chính
             else:
-                st.error("Sai mật khẩu! Vui lòng thử lại.")
+                st.error("Password is incorrect! Please try again.")
 
 
 # ============================================================
 # 2. KIỂM TRA TRẠNG THÁI HIỂN THỊ
 # ============================================================
-if st.session_state.authenticated:
-    # ========================================================
-    # 🌟 KHI ĐÃ ĐĂNG NHẬP: TOÀN BỘ CODE DASHBOARD CỦA BẠN NẰM Ở ĐÂY
-    # ========================================================
-    st.title("📊 CS OPERATIONS PERFORMANCE DASHBOARD (Chính thức)")
-    
-    # [DÁN TOÀN BỘ CODE DASHBOARD HIỆN TẠI CỦA BẠN VÀO DƯỚI NÀY]
-    st.info("Đã đăng nhập thành công! Toàn bộ nội dung biểu đồ, bộ lọc hiển thị ở đây.")
-    
-    # Nút đăng xuất (nếu cần thiết để test lại)
-    if st.button("Đăng xuất"):
-        st.session_state.authenticated = False
-        st.rerun()
 
-else:
     # ========================================================
     # 🌟 KHI CHƯA ĐĂNG NHẬP: CHỈ HIỂN THỊ TRANG COVER (TRANG BÌA)
     # ========================================================
@@ -92,11 +78,11 @@ else:
                 <hr style="border: 0; height: 3px; background: #FF7A00; width: 100%;">
                 <br>
                 <ul>
-                    <li><b>CAPACITY:</b> HC Capacity, Requirement & Gap</li>
-                    <li><b>WORKLOAD:</b> Customer, Volume, Segment & Activity</li>
-                    <li><b>UTILIZATION:</b> Office Workload, CS Allocation</li>
-                    <li><b>PERFORMANCE:</b> CS Resolution, YVF Booking Adoption</li>
-                </ul>
+                    #<li><b>CAPACITY:</b> HC Capacity, Requirement & Gap</li>
+                    #<li><b>WORKLOAD:</b> Customer, Volume, Segment & Activity</li>
+                    #<li><b>UTILIZATION:</b> Office Workload, CS Allocation</li>
+                    #<li><b>PERFORMANCE:</b> CS Resolution, YVF Booking Adoption</li>
+                #</ul>
             </div>
             """,
             unsafe_allow_html=True

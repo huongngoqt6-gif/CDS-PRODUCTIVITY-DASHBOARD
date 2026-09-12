@@ -30,22 +30,44 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-DASHBOARD_PASSWORD = "123"  # Bạn đổi mật khẩu ở đây
+if "show_login" not in st.session_state:
+    st.session_state.show_login = False
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
 
-def check_password():
-    if "authenticated" not in st.session_state:
-        st.session_state.authenticated = False
-    if st.session_state.authenticated:
-        return True
+DASHBOARD_PASSWORD = "123"  # Mật khẩu của bạn
 
+
+# ============================================================
+# TRƯỜNG HỢP 1: ĐÃ ĐĂNG NHẬP THÀNH CÔNG -> HIỂN THỊ DASHBOARD CHÍNH
+# ============================================================
+if st.session_state.authenticated:
+    
+    # --------------------------------------------------------
+    # 👉 TOÀN BỘ CODE DASHBOARD CŨ CỦA BẠN SẼ ĐƯỢC ĐẶT Ở ĐÂY (TRONG KHỐI NÀY)
+    # --------------------------------------------------------
+    st.title("CS Operations Dashboard")
+    # Ví dụ: code đọc file, vẽ biểu đồ, các tab của bạn nằm ở đây hết...
+
+
+# ============================================================
+# TRƯỜNG HỢP 2: Đang bấm nút View Dashboard -> Hiện khung nhập mật khẩu
+# ============================================================
+elif st.session_state.show_login:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("<br><br>", unsafe_allow_html=True)
         with st.form("login_form"):
-            st.markdown("### 🔒 **CS OPERATIONS DASHBOARD**")
-            st.caption("Vui lòng nhập mật khẩu để tiếp tục.")
+            st.markdown("### 🔒 **XÁC THỰC MẬT KHẨU**")
+            st.caption("Vui lòng nhập mật khẩu để truy cập hệ thống.")
+            
             entered_password = st.text_input("Mật khẩu", type="password", placeholder="Nhập password...")
-            submit_button = st.form_submit_button("VIEWDASHBOARD", use_container_width=True)
+            
+            col_a, col_b = st.columns(2)
+            with col_a:
+                submit_button = st.form_submit_button("Xác nhận", use_container_width=True)
+            with col_b:
+                back_button = st.form_submit_button("Quay lại", use_container_width=True)
 
             if submit_button:
                 if entered_password == DASHBOARD_PASSWORD:
@@ -53,10 +75,25 @@ def check_password():
                     st.rerun()
                 else:
                     st.error("Sai mật khẩu! Vui lòng thử lại.")
-    return False
+            
+            if back_button:
+                st.session_state.show_login = False
+                st.rerun()
 
-if not check_password():
-    st.stop()
+
+# ============================================================
+# TRƯỜNG HỢP 3: MẶC ĐỊNH BAN ĐẦU -> HIỂN THỊ TRANG COVER (TRANG BÌA NHƯ ẢNH)
+# ============================================================
+else:
+    # --------------------------------------------------------
+    # 👉 CODE GIAO DIỆN TRANG COVER (TRANG BÌA) CỦA BẠN NẰM Ở ĐÂY
+    # --------------------------------------------------------
+    # (Đoạn code HTML/CSS trang bìa và nút "VIEW DASHBOARD" của bạn)
+    
+    # Ví dụ nút View Dashboard để kích hoạt hiện form mật khẩu:
+    if st.button("VIEW DASHBOARD", type="primary"):
+        st.session_state.show_login = True
+        st.rerun()
 
 APP_TITLE = "CS OPERATIONS PERFORMANCE DASHBOARD"
 APP_SUBTITLE = "Capacity • Workload • Utilization • Performance"

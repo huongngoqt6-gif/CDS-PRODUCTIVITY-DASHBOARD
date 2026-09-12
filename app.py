@@ -60,17 +60,11 @@ def password_popup():
 # 2. PHÂN LUỒNG HIỂN THỊ
 # ============================================================
 if st.session_state.authenticated:
-    # ========================================================
-    # 🌟 NỘI DUNG DASHBOARD CHÍNH CỦA BẠN (Được hiển thị ngay khi nhập đúng mật khẩu)
-    # ========================================================
-    
-    # [BẠN HÃY DÁN TOÀN BỘ CODE DASHBOARD HIỆN TẠI CỦA BẠN VÀO ĐÂY]
-    # Ví dụ: Các biểu đồ, bộ lọc, metric, v.v. của bạn sẽ nằm ở đây mà không bị dính text thừa.
-    
+    # 🌟 KHI ĐÃ ĐĂNG NHẬP: Bỏ qua (pass) để code dashboard gốc ở dưới chạy bình thường
+    pass
+
 else:
-    # ========================================================
-    # 🌟 GIAO DIỆN TRANG COVER (TRANG BÌA BAN ĐẦU)
-    # ========================================================
+    # 🌟 KHI CHƯA ĐĂNG NHẬP: CHỈ HIỂN THỊ TRANG COVER (TRANG BÌA)
     st.markdown("<br>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 4, 1])
@@ -97,6 +91,9 @@ else:
         # Nút bấm kích hoạt Popup nhập mật khẩu
         if st.button("VIEW DASHBOARD ➔", type="primary", use_container_width=True):
             password_popup()
+            
+    # Dừng app ở đây khi chưa đăng nhập để không bị lộ nội dung dashboard bên dưới
+    st.stop()
 
 APP_TITLE = "CS OPERATIONS PERFORMANCE DASHBOARD"
 APP_SUBTITLE = "Capacity • Workload • Utilization • Performance"

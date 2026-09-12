@@ -30,80 +30,82 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-# 2. Khởi tạo session state
-if "show_login" not in st.session_state:
-    st.session_state.show_login = False
+# Khởi tạo trạng thái đăng nhập
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
-DASHBOARD_PASSWORD = "123"  # Mật khẩu bạn muốn đặt
+DASHBOARD_PASSWORD = "123"  # Mật khẩu của bạn
 
 
 # ============================================================
-# TRƯỜNG HỢP 1: ĐÃ NHẬP ĐÚNG MẬT KHẨU -> VÀO DASHBOARD CHÍNH
+# 1. ĐỊNH NGHĨA POPUP NHẬP MẬT KHẨU (ST.DIALOG)
+# ============================================================
+@st.dialog("🔒 XÁC THỰC TRUY CẬP DASHBOARD")
+def password_popup():
+    st.write("Vui lòng nhập mật khẩu để truy cập vào hệ thống dashboard.")
+    
+    with st.form("popup_login_form"):
+        entered_password = st.text_input("Mật khẩu bảo mật", type="password", placeholder="Nhập password...")
+        submit_btn = st.form_submit_button("Xác nhận", use_container_width=True)
+        
+        if submit_btn:
+            if entered_password == DASHBOARD_PASSWORD:
+                st.session_state.authenticated = True
+                st.rerun()  # Đóng popup và load lại trang chính
+            else:
+                st.error("Sai mật khẩu! Vui lòng thử lại.")
+
+
+# ============================================================
+# 2. KIỂM TRA TRẠNG THÁI HIỂN THỊ
 # ============================================================
 if st.session_state.authenticated:
+    # ========================================================
+    # 🌟 KHI ĐÃ ĐĂNG NHẬP: TOÀN BỘ CODE DASHBOARD CỦA BẠN NẰM Ở ĐÂY
+    # ========================================================
+    st.title("📊 CS OPERATIONS PERFORMANCE DASHBOARD (Chính thức)")
     
-    # [DÁN TOÀN BỘ CODE DASHBOARD CŨ CỦA BẠN VÀO ĐÂY]
-    st.title("📊 CS Operations Performance Dashboard (Chính)")
-    st.write("Nội dung dashboard hiển thị ở đây sau khi đăng nhập thành công...")
+    # [DÁN TOÀN BỘ CODE DASHBOARD HIỆN TẠI CỦA BẠN VÀO DƯỚI NÀY]
+    st.info("Đã đăng nhập thành công! Toàn bộ nội dung biểu đồ, bộ lọc hiển thị ở đây.")
     
-    # Thêm nút đăng xuất nếu muốn test lại từ đầu dễ hơn
+    # Nút đăng xuất (nếu cần thiết để test lại)
     if st.button("Đăng xuất"):
         st.session_state.authenticated = False
-        st.session_state.show_login = False
         st.rerun()
 
-
-# ============================================================
-# TRƯỜNG HỢP 2: ĐANG BẤM NÚT VIEW DASHBOARD -> HIỆN KHUNG NHẬP PASSWORD
-# ============================================================
-elif st.session_state.show_login:
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        with st.form("login_form"):
-            st.markdown("### 🔒 **XÁC THỰC MẬT KHẨU**")
-            st.caption("Vui lòng nhập mật khẩu để tiếp tục.")
-            
-            entered_password = st.text_input("Mật khẩu", type="password", placeholder="Nhập password...")
-            
-            col_a, col_b = st.columns(2)
-            with col_a:
-                submit_button = st.form_submit_button("Xác nhận", use_container_width=True)
-            with col_b:
-                back_button = st.form_submit_button("Quay lại", use_container_width=True)
-
-            if submit_button:
-                if entered_password == DASHBOARD_PASSWORD:
-                    st.session_state.authenticated = True
-                    st.rerun()
-                else:
-                    st.error("Sai mật khẩu! Vui lòng thử lại.")
-            
-            if back_button:
-                st.session_state.show_login = False
-                st.rerun()
-
-
-# ============================================================
-# TRƯỜNG HỢP 3: MẶC ĐỊNH BAN ĐẦU -> HIỂN THỊ TRANG COVER (TRANG BÌA)
-# ============================================================
 else:
-    # Giao diện trang cover của bạn (như hình ảnh bạn gửi)
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    # ========================================================
+    # 🌟 KHI CHƯA ĐĂNG NHẬP: CHỈ HIỂN THỊ TRANG COVER (TRANG BÌA)
+    # ========================================================
+    
+    # (Đoạn code hiển thị giao diện trang cover/card trắng của bạn ở đây)
+    st.markdown("<br>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 4, 1])
     with col2:
-        # Code hiển thị khung trang bìa của bạn...
-        st.markdown("## **CS OPERATIONS PERFORMANCE DASHBOARD**")
-        st.write("Capacity • Workload • Utilization • Performance")
-        st.divider()
+        # Giao diện trang bìa
+        st.markdown(
+            """
+            <div style="padding: 30px; border: 1px solid #D8E1EA; border-radius: 14px; background: #FFFFFF; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <h1 style="color: #0A192F; font-size: 26px;">CS OPERATIONS PERFORMANCE DASHBOARD</h1>
+                <p style="color: #666; font-size: 14px;">Capacity • Workload • Utilization • Performance</p>
+                <hr style="border: 0; height: 3px; background: #FF7A00; width: 100%;">
+                <br>
+                <ul>
+                    <li><b>CAPACITY:</b> HC Capacity, Requirement & Gap</li>
+                    <li><b>WORKLOAD:</b> Customer, Volume, Segment & Activity</li>
+                    <li><b>UTILIZATION:</b> Office Workload, CS Allocation</li>
+                    <li><b>PERFORMANCE:</b> CS Resolution, YVF Booking Adoption</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
         
-        # ⚠️ ĐẢM BẢO NÚT BẤM NÀY DÙNG `st.button` CỦA STREAMLIT
+        st.write("")
+        # Nút bấm kích hoạt Popup nhập mật khẩu
         if st.button("VIEW DASHBOARD ➔", type="primary", use_container_width=True):
-            st.session_state.show_login = True
-            st.rerun()
+            password_popup()  # Gọi hàm popup hiện lên
 
 APP_TITLE = "CS OPERATIONS PERFORMANCE DASHBOARD"
 APP_SUBTITLE = "Capacity • Workload • Utilization • Performance"

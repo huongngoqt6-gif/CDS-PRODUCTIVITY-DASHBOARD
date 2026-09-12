@@ -30,110 +30,69 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-# 1. Khởi tạo trạng thái xác thực
+# Khởi tạo trạng thái đăng nhập
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 DASHBOARD_PASSWORD = "123"  # Mật khẩu của bạn
 
 
-# 2. XỬ LÝ GIAO DIỆN KHI CHƯA ĐĂNG NHẬP
-if not st.session_state.authenticated:
+# ============================================================
+# 1. ĐỊNH NGHĨA POPUP NHẬP MẬT KHẨU (ST.DIALOG)
+# ============================================================
+@st.dialog("🔒 XÁC THỰC TRUY CẬP DASHBOARD")
+def password_popup():
+    st.write("Vui lòng nhập mật khẩu để truy cập vào hệ thống dashboard.")
     
-    # Kiểm tra xem người dùng đang ở Trang Cover hay Màn hình nhập mật khẩu
-    # Ta dùng thêm 1 biến state: show_pwd
-    if "show_pwd" not in st.session_state:
-        st.session_state.show_pwd = False
-
-    if not st.session_state.show_pwd:
-        # ==========================================================
-        # TRANG COVER BAN ĐẦU
-        # ==========================================================
-        st.markdown("<br>", unsafe_allow_html=True)
+    with st.form("popup_login_form"):
+        entered_password = st.text_input("Mật khẩu bảo mật", type="password", placeholder="Nhập password...")
+        submit_btn = st.form_submit_button("Xác nhận", use_container_width=True)
         
-        # Dùng st.form để nút bấm nhạy tuyệt đối, bấm 1 phát ăn ngay (không cần 2 lần)
-        with st.form("cover_form", border=False):
-            # 👉 BẠN CÓ THỂ ĐẶT CODE GIAO DIỆN/TIÊU ĐỀ TRANG COVER Ở ĐÂY
-            st.markdown("<h1 style='text-align: center;'>CS Operations Performance Dashboard</h1>", unsafe_allow_html=True)
-            st.markdown("<p style='text-align: center; color: gray;'>Hệ thống quản lý và theo dõi hiệu suất hoạt động</p>", unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
-            
-            # Căn giữa nút bấm
-            col1, col2, col3 = st.columns([1, 1.5, 1])
-            with col2:
-                clicked = st.form_submit_button("VIEW DASHBOARD ➔", type="primary", use_container_width=True)
-            
-            if clicked:
-                st.session_state.show_pwd = True
-                st.rerun()
-                
-    else:
-        # ==========================================================
-        # MÀN HÌNH NHẬP MẬT KHẨU
-        # ==========================================================
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        col1, col2, col3 = st.columns([1, 1.5, 1])
-        
-        with col2:
-            with st.form("login_form"):
-                st.markdown("### 🔒 **XÁC THỰC TRUY CẬP DASHBOARD**")
-                st.caption("Vui lòng nhập mật khẩu để truy cập vào hệ thống dashboard.")
-                
-                entered_password = st.text_input("Mật khẩu bảo mật", type="password", placeholder="Nhập password...")
-                
-                c1, c2 = st.columns(2)
-                with c1:
-                    submit_btn = st.form_submit_button("Xác nhận", use_container_width=True)
-                with c2:
-                    back_btn = st.form_submit_button("Quay lại", use_container_width=True)
-                
-                if submit_btn:
-                    if entered_password == DASHBOARD_PASSWORD:
-                        st.session_state.authenticated = True
-                        st.rerun()
-                    else:
-                        st.error("Sai mật khẩu! Vui lòng thử lại.")
-                
-                if back_btn:
-                    st.session_state.show_pwd = False
-                    st.rerun()
-                    
-    st.stop()  # Dừng lại ở đây, không cho chạy phần dashboard chính bên dưới nếu chưa đăng nhập
+        if submit_btn:
+            if entered_password == DASHBOARD_PASSWORD:
+                st.session_state.authenticated = True
+                st.rerun()  # Đóng popup và load trực tiếp vào dashboard
+            else:
+                st.error("Sai mật khẩu! Vui lòng thử lại.")
 
 
 # ============================================================
-# 👉 TOÀN BỘ CODE DASHBOARD CHÍNH CỦA BẠN NẰM Ở DƯỚI CÙNG NÀY
-# (Chỉ chạy khi st.session_state.authenticated == True)
+# 2. PHÂN LUỒNG HIỂN THỊ
 # ============================================================
-
-st.success("🎉 Đăng nhập thành công! Chào mừng bạn đến với Dashboard.")
-
-# Ví dụ code dashboard của bạn:
-st.title("📊 CS Operations Performance Dashboard")
-st.write("Nội dung dashboard chính hiển thị ở đây...")
-
-# Nút đăng xuất (nếu cần)
-if st.button("Đăng xuất"):
-    st.session_state.authenticated = False
-    st.session_state.show_pwd = False
-    st.rerun()
+if st.session_state.authenticated:
+    # 🌟 KHI ĐÃ ĐĂNG NHẬP: Bỏ qua (pass) để code dashboard gốc ở dưới chạy bình thường
+    pass
 
 else:
-    # ============================================================
-    # TRƯỜNG HỢP 3: TRANG COVER BAN ĐẦU
-    # ============================================================
-    
-    # [DÁN CODE GIAO DIỆN TRANG COVER GỐC CỦA BẠN Ở ĐÂY]
+    # 🌟 KHI CHƯA ĐĂNG NHẬP: CHỈ HIỂN THỊ TRANG COVER (TRANG BÌA)
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # SỬ DỤNG on_click ĐỂ BẤM 1 PHÁT ĂN NGAY LẬP TỨC
-    st.button(
-        "VIEW DASHBOARD ➔", 
-        type="primary", 
-        use_container_width=True, 
-        on_click=active_password_screen
-    )
+    col1, col2, col3 = st.columns([1, 4, 1])
+    with col2:
+        st.markdown(
+            """
+            <div style="padding: 30px; border: 1px solid #D8E1EA; border-radius: 14px; background: #FFFFFF; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <h1 style="color: #0A192F; font-size: 26px;">CS OPERATIONS PERFORMANCE DASHBOARD</h1>
+                <p style="color: #666; font-size: 14px;">Capacity • Workload • Utilization • Performance</p>
+                <hr style="border: 0; height: 3px; background: #FF7A00; width: 100%;">
+                <br>
+                <ul>
+                    <li><b>CAPACITY:</b> HC Capacity, Requirement & Gap</li>
+                    <li><b>WORKLOAD:</b> Customer, Volume, Segment & Activity</li>
+                    <li><b>UTILIZATION:</b> Office Workload, CS Allocation</li>
+                    <li><b>PERFORMANCE:</b> CS Resolution, YVF Booking Adoption</li>
+                </ul>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
         
+        st.write("")
+        # Nút bấm kích hoạt Popup nhập mật khẩu
+        if st.button("VIEW DASHBOARD ➔", type="primary", use_container_width=True):
+            password_popup()
+            
+    # Dừng app ở đây khi chưa đăng nhập để không bị lộ nội dung dashboard bên dưới
     st.stop()
 
 APP_TITLE = "CS OPERATIONS PERFORMANCE DASHBOARD"

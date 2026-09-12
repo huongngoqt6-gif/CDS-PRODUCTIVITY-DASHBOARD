@@ -47,8 +47,8 @@ def password_popup():
         """
         <style>
         div[data-testid="stModal"] > div {
-            width: 550px !important;
-            max-width: 550px !important;
+            width: 750px !important;
+            max-width: 750px !important;
         }
         </style>
         """,

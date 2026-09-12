@@ -34,18 +34,18 @@ st.set_page_config(
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
-DASHBOARD_PASSWORD = "123"  # Mật khẩu của bạn
+DASHBOARD_PASSWORD = "1234"  # Mật khẩu của bạn
 
 
 # ============================================================
 # 1. ĐỊNH NGHĨA POPUP NHẬP MẬT KHẨU (ST.DIALOG)
 # ============================================================
-@st.dialog("🔒 XÁC THỰC TRUY CẬP DASHBOARD")
+@st.dialog("🔒 DASHBOARD ACCESS AUTHENTICATION")
 def password_popup():
-    st.write("Vui lòng nhập mật khẩu để truy cập vào hệ thống dashboard.")
+    st.write("Please enter the password to access the dashboard.")
     
     with st.form("popup_login_form"):
-        entered_password = st.text_input("Mật khẩu bảo mật", type="password", placeholder="Nhập password...")
+        entered_password = st.text_input("Password", type="password", placeholder="Input password...")
         submit_btn = st.form_submit_button("Xác nhận", use_container_width=True)
         
         if submit_btn:
@@ -53,7 +53,7 @@ def password_popup():
                 st.session_state.authenticated = True
                 st.rerun()  # Đóng popup và load trực tiếp vào dashboard
             else:
-                st.error("Sai mật khẩu! Vui lòng thử lại.")
+                st.error("Password incorrect! Please try again.")
 
 
 # ============================================================

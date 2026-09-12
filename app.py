@@ -39,14 +39,6 @@ if "show_password_screen" not in st.session_state:
 DASHBOARD_PASSWORD = "123"  # Mật khẩu của bạn
 
 
-# --- ĐỊNH NGHĨA CÁC HÀM CALLBACK (Kích hoạt ngay lập tức trong 1 click) ---
-def active_password_screen():
-    st.session_state.show_password_screen = True
-
-def back_to_cover():
-    st.session_state.show_password_screen = False
-
-
 # 2. XỬ LÝ PHÂN LUỒNG GIAO DIỆN
 if st.session_state.authenticated:
     # ============================================================
@@ -56,7 +48,7 @@ if st.session_state.authenticated:
 
 elif st.session_state.show_password_screen:
     # ============================================================
-    # TRƯỜNG HỢP 2: HIỆN MÀN HÌNH NHẬP MẬT KHẨU
+    # TRƯỜNG HỢP 2: MÀN HÌNH NHẬP MẬT KHẨU
     # ============================================================
     st.markdown("<br><br>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 1.5, 1])
@@ -72,7 +64,6 @@ elif st.session_state.show_password_screen:
             with c1:
                 submit_btn = st.form_submit_button("Xác nhận", use_container_width=True)
             with c2:
-                # Dùng on_click hoặc xử lý nút quay lại ngay trong form
                 back_btn = st.form_submit_button("Quay lại", use_container_width=True)
             
             if submit_btn:
@@ -86,6 +77,26 @@ elif st.session_state.show_password_screen:
                 st.session_state.show_password_screen = False
                 st.rerun()
                 
+    st.stop()
+
+else:
+    # ============================================================
+    # TRƯỜNG HỢP 3: TRANG COVER BAN ĐẦU
+    # ============================================================
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Đưa nút View Dashboard vào trong 1 Form riêng biệt trên trang Cover
+    # Cách này giúp trình duyệt bắt sự kiện click chuẩn xác 100% ngay từ cú bấm đầu tiên
+    with st.form("cover_form", border=False):
+        # [DÁN CODE GIAO DIỆN TRANG COVER GỐC CỦA BẠN Ở ĐÂY (nếu có các thành phần trang trí)]
+        
+        submitted = st.form_submit_button("VIEW DASHBOARD ➔", type="primary", use_container_width=True)
+        
+        if submitted:
+            st.session_state.show_password_screen = True
+            st.rerun()
+            
     st.stop()
 
 else:

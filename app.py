@@ -42,6 +42,18 @@ DASHBOARD_PASSWORD = "1234"  # Mật khẩu của bạn
 # ============================================================
 @st.dialog("🔒 DASHBOARD ACCESS AUTHENTICATION")
 def password_popup():
+    # Ép chiều rộng modal rộng ra để chữ không bị rớt dòng
+    st.markdown(
+        """
+        <style>
+        div[data-testid="stModal"] > div {
+            width: 550px !important;
+            max-width: 550px !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
     st.write("Please enter the password to access the dashboard.")
     
     with st.form("popup_login_form"):

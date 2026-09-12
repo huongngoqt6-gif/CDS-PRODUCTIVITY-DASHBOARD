@@ -30,6 +30,33 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+DASHBOARD_PASSWORD = "123"  # Bạn đổi mật khẩu ở đây
+
+def check_password():
+    if "authenticated" not in st.session_state:
+        st.session_state.authenticated = False
+    if st.session_state.authenticated:
+        return True
+
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        with st.form("login_form"):
+            st.markdown("### 🔒 **CS OPERATIONS DASHBOARD**")
+            st.caption("Vui lòng nhập mật khẩu để tiếp tục.")
+            entered_password = st.text_input("Mật khẩu", type="password", placeholder="Nhập password...")
+            submit_button = st.form_submit_button("VIEWDASHBOARD", use_container_width=True)
+
+            if submit_button:
+                if entered_password == DASHBOARD_PASSWORD:
+                    st.session_state.authenticated = True
+                    st.rerun()
+                else:
+                    st.error("Sai mật khẩu! Vui lòng thử lại.")
+    return False
+
+if not check_password():
+    st.stop()
 
 APP_TITLE = "CS OPERATIONS PERFORMANCE DASHBOARD"
 APP_SUBTITLE = "Capacity • Workload • Utilization • Performance"

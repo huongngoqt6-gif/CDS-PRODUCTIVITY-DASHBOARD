@@ -45,31 +45,36 @@ def password_popup():
     st.write("Vui lòng nhập mật khẩu để truy cập vào hệ thống dashboard.")
     
     with st.form("popup_login_form"):
-        entered_password = st.text_input("Password", type="password", placeholder="Insert password...")
-        submit_btn = st.form_submit_button("Confirm", use_container_width=True)
+        entered_password = st.text_input("Mật khẩu bảo mật", type="password", placeholder="Nhập password...")
+        submit_btn = st.form_submit_button("Xác nhận", use_container_width=True)
         
         if submit_btn:
             if entered_password == DASHBOARD_PASSWORD:
                 st.session_state.authenticated = True
-                st.rerun()  # Đóng popup và load lại trang chính
+                st.rerun()  # Đóng popup và load trực tiếp vào dashboard
             else:
-                st.error("Password is incorrect! Please try again.")
+                st.error("Sai mật khẩu! Vui lòng thử lại.")
 
 
 # ============================================================
-# 2. KIỂM TRA TRẠNG THÁI HIỂN THỊ
+# 2. PHÂN LUỒNG HIỂN THỊ
 # ============================================================
-
+if st.session_state.authenticated:
     # ========================================================
-    # 🌟 KHI CHƯA ĐĂNG NHẬP: CHỈ HIỂN THỊ TRANG COVER (TRANG BÌA)
+    # 🌟 NỘI DUNG DASHBOARD CHÍNH CỦA BẠN (Được hiển thị ngay khi nhập đúng mật khẩu)
     # ========================================================
     
-    # (Đoạn code hiển thị giao diện trang cover/card trắng của bạn ở đây)
+    # [BẠN HÃY DÁN TOÀN BỘ CODE DASHBOARD HIỆN TẠI CỦA BẠN VÀO ĐÂY]
+    # Ví dụ: Các biểu đồ, bộ lọc, metric, v.v. của bạn sẽ nằm ở đây mà không bị dính text thừa.
+    
+else:
+    # ========================================================
+    # 🌟 GIAO DIỆN TRANG COVER (TRANG BÌA BAN ĐẦU)
+    # ========================================================
     st.markdown("<br>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 4, 1])
     with col2:
-        # Giao diện trang bìa
         st.markdown(
             """
             <div style="padding: 30px; border: 1px solid #D8E1EA; border-radius: 14px; background: #FFFFFF; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
@@ -78,11 +83,11 @@ def password_popup():
                 <hr style="border: 0; height: 3px; background: #FF7A00; width: 100%;">
                 <br>
                 <ul>
-                    #<li><b>CAPACITY:</b> HC Capacity, Requirement & Gap</li>
-                    #<li><b>WORKLOAD:</b> Customer, Volume, Segment & Activity</li>
-                    #<li><b>UTILIZATION:</b> Office Workload, CS Allocation</li>
-                    #<li><b>PERFORMANCE:</b> CS Resolution, YVF Booking Adoption</li>
-                #</ul>
+                    <li><b>CAPACITY:</b> HC Capacity, Requirement & Gap</li>
+                    <li><b>WORKLOAD:</b> Customer, Volume, Segment & Activity</li>
+                    <li><b>UTILIZATION:</b> Office Workload, CS Allocation</li>
+                    <li><b>PERFORMANCE:</b> CS Resolution, YVF Booking Adoption</li>
+                </ul>
             </div>
             """,
             unsafe_allow_html=True
@@ -91,7 +96,7 @@ def password_popup():
         st.write("")
         # Nút bấm kích hoạt Popup nhập mật khẩu
         if st.button("VIEW DASHBOARD ➔", type="primary", use_container_width=True):
-            password_popup()  # Gọi hàm popup hiện lên
+            password_popup()
 
 APP_TITLE = "CS OPERATIONS PERFORMANCE DASHBOARD"
 APP_SUBTITLE = "Capacity • Workload • Utilization • Performance"

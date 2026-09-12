@@ -46,7 +46,7 @@ def password_popup():
     
     with st.form("popup_login_form"):
         entered_password = st.text_input("Password", type="password", placeholder="Input password...")
-        submit_btn = st.form_submit_button("Xác nhận", use_container_width=True)
+        submit_btn = st.form_submit_button("Confirm", use_container_width=True)
         
         if submit_btn:
             if entered_password == DASHBOARD_PASSWORD:

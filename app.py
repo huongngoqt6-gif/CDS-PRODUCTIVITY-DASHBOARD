@@ -30,74 +30,93 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-# 1. Khởi tạo trạng thái
+# 1. Khởi tạo trạng thái xác thực
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
-if "show_password_screen" not in st.session_state:
-    st.session_state.show_password_screen = False
 
 DASHBOARD_PASSWORD = "123"  # Mật khẩu của bạn
 
 
-# 2. XỬ LÝ PHÂN LUỒNG GIAO DIỆN
-if st.session_state.authenticated:
-    # ============================================================
-    # TRƯỜNG HỢP 1: ĐÃ ĐĂNG NHẬP THÀNH CÔNG -> VÀO DASHBOARD CHÍNH
-    # ============================================================
-    pass  # Chạy code dashboard gốc ở dưới
-
-elif st.session_state.show_password_screen:
-    # ============================================================
-    # TRƯỜNG HỢP 2: MÀN HÌNH NHẬP MẬT KHẨU
-    # ============================================================
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 1.5, 1])
+# 2. XỬ LÝ GIAO DIỆN KHI CHƯA ĐĂNG NHẬP
+if not st.session_state.authenticated:
     
-    with col2:
-        with st.form("direct_login_form"):
-            st.markdown("### 🔒 **XÁC THỰC TRUY CẬP DASHBOARD**")
-            st.caption("Vui lòng nhập mật khẩu để truy cập vào hệ thống dashboard.")
+    # Kiểm tra xem người dùng đang ở Trang Cover hay Màn hình nhập mật khẩu
+    # Ta dùng thêm 1 biến state: show_pwd
+    if "show_pwd" not in st.session_state:
+        st.session_state.show_pwd = False
+
+    if not st.session_state.show_pwd:
+        # ==========================================================
+        # TRANG COVER BAN ĐẦU
+        # ==========================================================
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Dùng st.form để nút bấm nhạy tuyệt đối, bấm 1 phát ăn ngay (không cần 2 lần)
+        with st.form("cover_form", border=False):
+            # 👉 BẠN CÓ THỂ ĐẶT CODE GIAO DIỆN/TIÊU ĐỀ TRANG COVER Ở ĐÂY
+            st.markdown("<h1 style='text-align: center;'>CS Operations Performance Dashboard</h1>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center; color: gray;'>Hệ thống quản lý và theo dõi hiệu suất hoạt động</p>", unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
             
-            entered_password = st.text_input("Mật khẩu bảo mật", type="password", placeholder="Nhập password...")
+            # Căn giữa nút bấm
+            col1, col2, col3 = st.columns([1, 1.5, 1])
+            with col2:
+                clicked = st.form_submit_button("VIEW DASHBOARD ➔", type="primary", use_container_width=True)
             
-            c1, c2 = st.columns(2)
-            with c1:
-                submit_btn = st.form_submit_button("Xác nhận", use_container_width=True)
-            with c2:
-                back_btn = st.form_submit_button("Quay lại", use_container_width=True)
-            
-            if submit_btn:
-                if entered_password == DASHBOARD_PASSWORD:
-                    st.session_state.authenticated = True
-                    st.rerun()
-                else:
-                    st.error("Sai mật khẩu! Vui lòng thử lại.")
-            
-            if back_btn:
-                st.session_state.show_password_screen = False
+            if clicked:
+                st.session_state.show_pwd = True
                 st.rerun()
                 
-    st.stop()
+    else:
+        # ==========================================================
+        # MÀN HÌNH NHẬP MẬT KHẨU
+        # ==========================================================
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1, 1.5, 1])
+        
+        with col2:
+            with st.form("login_form"):
+                st.markdown("### 🔒 **XÁC THỰC TRUY CẬP DASHBOARD**")
+                st.caption("Vui lòng nhập mật khẩu để truy cập vào hệ thống dashboard.")
+                
+                entered_password = st.text_input("Mật khẩu bảo mật", type="password", placeholder="Nhập password...")
+                
+                c1, c2 = st.columns(2)
+                with c1:
+                    submit_btn = st.form_submit_button("Xác nhận", use_container_width=True)
+                with c2:
+                    back_btn = st.form_submit_button("Quay lại", use_container_width=True)
+                
+                if submit_btn:
+                    if entered_password == DASHBOARD_PASSWORD:
+                        st.session_state.authenticated = True
+                        st.rerun()
+                    else:
+                        st.error("Sai mật khẩu! Vui lòng thử lại.")
+                
+                if back_btn:
+                    st.session_state.show_pwd = False
+                    st.rerun()
+                    
+    st.stop()  # Dừng lại ở đây, không cho chạy phần dashboard chính bên dưới nếu chưa đăng nhập
 
-else:
-    # ============================================================
-    # TRƯỜNG HỢP 3: TRANG COVER BAN ĐẦU
-    # ============================================================
-    
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    # Đưa nút View Dashboard vào trong 1 Form riêng biệt trên trang Cover
-    # Cách này giúp trình duyệt bắt sự kiện click chuẩn xác 100% ngay từ cú bấm đầu tiên
-    with st.form("cover_form", border=False):
-        # [DÁN CODE GIAO DIỆN TRANG COVER GỐC CỦA BẠN Ở ĐÂY (nếu có các thành phần trang trí)]
-        
-        submitted = st.form_submit_button("VIEW DASHBOARD ➔", type="primary", use_container_width=True)
-        
-        if submitted:
-            st.session_state.show_password_screen = True
-            st.rerun()
-            
-    st.stop()
+
+# ============================================================
+# 👉 TOÀN BỘ CODE DASHBOARD CHÍNH CỦA BẠN NẰM Ở DƯỚI CÙNG NÀY
+# (Chỉ chạy khi st.session_state.authenticated == True)
+# ============================================================
+
+st.success("🎉 Đăng nhập thành công! Chào mừng bạn đến với Dashboard.")
+
+# Ví dụ code dashboard của bạn:
+st.title("📊 CS Operations Performance Dashboard")
+st.write("Nội dung dashboard chính hiển thị ở đây...")
+
+# Nút đăng xuất (nếu cần)
+if st.button("Đăng xuất"):
+    st.session_state.authenticated = False
+    st.session_state.show_pwd = False
+    st.rerun()
 
 else:
     # ============================================================

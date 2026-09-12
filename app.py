@@ -39,16 +39,24 @@ if "show_password_screen" not in st.session_state:
 DASHBOARD_PASSWORD = "123"  # Mật khẩu của bạn
 
 
+# --- ĐỊNH NGHĨA CÁC HÀM CALLBACK (Kích hoạt ngay lập tức trong 1 click) ---
+def active_password_screen():
+    st.session_state.show_password_screen = True
+
+def back_to_cover():
+    st.session_state.show_password_screen = False
+
+
 # 2. XỬ LÝ PHÂN LUỒNG GIAO DIỆN
 if st.session_state.authenticated:
     # ============================================================
     # TRƯỜNG HỢP 1: ĐÃ ĐĂNG NHẬP THÀNH CÔNG -> VÀO DASHBOARD CHÍNH
     # ============================================================
-    pass  # Bỏ qua để chạy toàn bộ code dashboard gốc ở dưới
+    pass  # Chạy code dashboard gốc ở dưới
 
 elif st.session_state.show_password_screen:
     # ============================================================
-    # TRƯỜNG HỢP 2: ĐÃ BẤM VIEW DASHBOARD -> HIỆN THẲNG MÀN HÌNH NHẬP MẬT KHẨU
+    # TRƯỜNG HỢP 2: HIỆN MÀN HÌNH NHẬP MẬT KHẨU
     # ============================================================
     st.markdown("<br><br>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 1.5, 1])
@@ -64,6 +72,7 @@ elif st.session_state.show_password_screen:
             with c1:
                 submit_btn = st.form_submit_button("Xác nhận", use_container_width=True)
             with c2:
+                # Dùng on_click hoặc xử lý nút quay lại ngay trong form
                 back_btn = st.form_submit_button("Quay lại", use_container_width=True)
             
             if submit_btn:
@@ -77,7 +86,7 @@ elif st.session_state.show_password_screen:
                 st.session_state.show_password_screen = False
                 st.rerun()
                 
-    st.stop()  # Dừng app không cho hiển thị nội dung bên dưới
+    st.stop()
 
 else:
     # ============================================================
@@ -87,13 +96,15 @@ else:
     # [DÁN CODE GIAO DIỆN TRANG COVER GỐC CỦA BẠN Ở ĐÂY]
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Nút View Dashboard trên trang cover của bạn:
-    # Khi bấm vào đây, đổi trạng thái và st.rerun() NGAY LẬP TỨC trong 1 lần bấm duy nhất
-    if st.button("VIEW DASHBOARD ➔", type="primary", use_container_width=True):
-        st.session_state.show_password_screen = True
-        st.rerun()
+    # SỬ DỤNG on_click ĐỂ BẤM 1 PHÁT ĂN NGAY LẬP TỨC
+    st.button(
+        "VIEW DASHBOARD ➔", 
+        type="primary", 
+        use_container_width=True, 
+        on_click=active_password_screen
+    )
         
-    st.stop()  # Dừng app không cho hiển thị nội dung bên dưới
+    st.stop()
 
 APP_TITLE = "CS OPERATIONS PERFORMANCE DASHBOARD"
 APP_SUBTITLE = "Capacity • Workload • Utilization • Performance"

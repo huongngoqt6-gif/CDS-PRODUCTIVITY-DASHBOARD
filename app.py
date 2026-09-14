@@ -40,15 +40,15 @@ DASHBOARD_PASSWORD = "1234"  # Mật khẩu của bạn
 # ============================================================
 # 1. ĐỊNH NGHĨA POPUP NHẬP MẬT KHẨU (ST.DIALOG)
 # ============================================================
-@st.dialog("🔒 ACCESS AUTHENTICATION")
+@st.dialog("🔒  ACCESS AUTHENTICATION")
 def password_popup():
     # Ép chiều rộng modal rộng ra để chữ không bị rớt dòng
     st.markdown(
         """
         <style>
         div[data-testid="stModal"] > div {
-            width: 600px !important;
-            max-width: 600px !important;
+            width: 1000px !important;
+            max-width: 1000px !important;
         }
         </style>
         """,
@@ -69,27 +69,14 @@ def password_popup():
 
 
 # ============================================================
-# 2. PHÂN LUỒNG HIỂN THỊ CHÍNH
+# 2. PHÂN LUỒNG HIỂN THỊ
 # ============================================================
 if st.session_state.authenticated:
-    # ============================================================
-    # 🌟 KHI ĐÃ ĐĂNG NHẬP THÀNH CÔNG: CHẠY NỘI DUNG DASHBOARD GỐC
-    # ============================================================
-    st.success("Welcome to Dashboard!")
-    
-    # 👉 TOÀN BỘ CODE DASHBOARD CỦA BẠN NẶM Ở DƯỚI NÀY:
-    st.title("📊 CS Operations Performance Dashboard")
-    st.write("Nội dung chi tiết của dashboard...")
-    
-    # Thêm nút đăng xuất nếu muốn test lại từ đầu
-    if st.button("Log out"):
-        st.session_state.authenticated = False
-        st.rerun()
+    # 🌟 KHI ĐÃ ĐĂNG NHẬP: Bỏ qua (pass) để code dashboard gốc ở dưới chạy bình thường
+    pass
 
 else:
-    # ============================================================
-    # 🌟 KHI CHƯA ĐĂNG NHẬP: HIỂN THỊ TRANG BÌA (COVER PAGE)
-    # ============================================================
+    # 🌟 KHI CHƯA ĐĂNG NHẬP: CHỈ HIỂN THỊ TRANG COVER (TRANG BÌA)
     st.markdown("<br>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 4, 1])
@@ -113,13 +100,13 @@ else:
         )
         
         st.write("")
-        
-        # Nút bấm kích hoạt Popup nhập mật khẩu ngay trên trang bìa
+        # Nút bấm kích hoạt Popup nhập mật khẩu
         if st.button("VIEW DASHBOARD ➔", type="primary", use_container_width=True):
             password_popup()
             
-    # Dừng app ở đây để không lộ nội dung dashboard bên dưới khi chưa đăng nhập
+    # Dừng app ở đây khi chưa đăng nhập để không bị lộ nội dung dashboard bên dưới
     st.stop()
+
 
 APP_TITLE = "CS OPERATIONS PERFORMANCE DASHBOARD"
 APP_SUBTITLE = "Capacity • Workload • Utilization • Performance"

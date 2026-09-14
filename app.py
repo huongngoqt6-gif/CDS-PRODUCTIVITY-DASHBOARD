@@ -30,53 +30,57 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-# Khởi tạo trạng thái đăng nhập
+# Khởi tạo trạng thái đăng nhập và trạng thái chuyển màn hình
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
+if "show_password_screen" not in st.session_state:
+    st.session_state.show_password_screen = False
 
 DASHBOARD_PASSWORD = "1234"  # Mật khẩu của bạn
 
 
 # ============================================================
-# 1. ĐỊNH NGHĨA POPUP NHẬP MẬT KHẨU (ST.DIALOG)
+# 1. PHÂN LUỒNG HIỂN THỊ GIAO DIỆN
 # ============================================================
-@st.dialog("🔒  ACCESS AUTHENTICATION")
-def password_popup():
-    # Ép chiều rộng modal rộng ra để chữ không bị rớt dòng
-    st.markdown(
-        """
-        <style>
-        div[data-testid="stModal"] > div {
-            width: 1000px !important;
-            max-width: 1000px !important;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-    st.write("Please enter the password to access the dashboard.")
-    
-    with st.form("popup_login_form"):
-        entered_password = st.text_input("Password", type="password", placeholder="Input password...")
-        submit_btn = st.form_submit_button("Confirm", use_container_width=True)
-        
-        if submit_btn:
-            if entered_password == DASHBOARD_PASSWORD:
-                st.session_state.authenticated = True
-                st.rerun()  # Đóng popup và load trực tiếp vào dashboard
-            else:
-                st.error("Password incorrect! Please try again.")
 
-
-# ============================================================
-# 2. PHÂN LUỒNG HIỂN THỊ
-# ============================================================
 if st.session_state.authenticated:
-    # 🌟 KHI ĐÃ ĐĂNG NHẬP: Bỏ qua (pass) để code dashboard gốc ở dưới chạy bình thường
+    # 🌟 TRƯỜNG HỢP 1: ĐÃ ĐĂNG NHẬP THÀNH CÔNG -> HIỂN THỊ DASHBOARD CHÍNH
+    # (Toàn bộ code dashboard gốc của bạn sẽ nằm ở dưới phần này)
     pass
 
+elif st.session_state.show_password_screen:
+    # 🌟 TRƯỜNG HỢP 2: ĐÃ BẤM VIEW DASHBOARD -> HIỆN TRANG NHẬP MẬT KHẨU
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns([1, 1.5, 1])
+    with col2:
+        with st.form("direct_login_form"):
+            st.markdown("### 🔒 **ACCESS AUTHENTICATION**")
+            st.caption("Please enter the password to access the dashboard.")
+            
+            entered_password = st.text_input("Password", type="password", placeholder="Input password...")
+            
+            c1, c2 = st.columns(2)
+            with c1:
+                submit_btn = st.form_submit_button("Confirm", use_container_width=True)
+            with c2:
+                back_btn = st.form_submit_button("Back", use_container_width=True)
+            
+            if submit_btn:
+                if entered_password == DASHBOARD_PASSWORD:
+                    st.session_state.authenticated = True
+                    st.rerun()
+                else:
+                    st.error("Password incorrect! Please try again.")
+            
+            if back_btn:
+                st.session_state.show_password_screen = False
+                st.rerun()
+                
+    st.stop()  # Dừng app không cho lộ nội dung bên dưới
+
 else:
-    # 🌟 KHI CHƯA ĐĂNG NHẬP: CHỈ HIỂN THỊ TRANG COVER (TRANG BÌA)
+    # 🌟 TRƯỜNG HỢP 3: TRANG COVER BAN ĐẦU (TRANG BÌA)
     st.markdown("<br>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 4, 1])
@@ -100,12 +104,21 @@ else:
         )
         
         st.write("")
-        # Nút bấm kích hoạt Popup nhập mật khẩu
-        if st.button("VIEW DASHBOARD ➔", type="primary", use_container_width=True):
-            password_popup()
-            
-    # Dừng app ở đây khi chưa đăng nhập để không bị lộ nội dung dashboard bên dưới
-    st.stop()
+        
+        # Dùng st.form riêng cho nút View Dashboard để bấm 1 phát chuyển trang ngay lập tức
+        with st.form("cover_button_form", border=False):
+            view_btn = st.form_submit_button("VIEW DASHBOARD ➔", type="primary", use_container_width=True)
+            if view_btn:
+                st.session_state.show_password_screen = True
+                st.rerun()
+                
+    st.stop()  # Dừng app ở đây để không hiển thị nội dung dashboard khi chưa đăng nhập
+
+
+# ============================================================
+# 👉 TOÀN BỘ CODE DASHBOARD GỐC CỦA BẠN NẰM Ở DƯỚI CÙNG NÀY
+# ============================================================
+st.success("Welcome to Dashboard!")
 
 APP_TITLE = "CS OPERATIONS PERFORMANCE DASHBOARD"
 APP_SUBTITLE = "Capacity • Workload • Utilization • Performance"
